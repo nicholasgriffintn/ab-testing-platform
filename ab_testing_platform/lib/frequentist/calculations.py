@@ -24,3 +24,20 @@ def calculate_power(
     )
     z_effect = effect_size / se_pooled
     return 1 - st.norm.cdf(z_alpha - z_effect)
+
+def calculate_stat_pvalue(self, sequential, stopping_threshold):
+    pooled_prop, se_pooled = calculate_pooled_prop_se(self)
+    stat = (self.prop_alt - self.prop_null) / se_pooled
+
+    if sequential:
+        return self.perform_sequential_testing(stopping_threshold)
+    else:
+        pvalue = calculate_pvalue(stat, self.alt_hypothesis, self.alpha)
+        return stat, pvalue
+
+def calculate_pooled_prop_se(self):
+    pooled_prop = (self.success_null + self.success_alt) / (self.trials_null + self.trials_alt)
+    se_pooled = np.sqrt(
+        pooled_prop * (1 - pooled_prop) * (1 / self.trials_null + 1 / self.trials_alt)
+    )
+    return pooled_prop, se_pooled

@@ -37,7 +37,7 @@ def run_frequentist_test(
         test_trials = group_results[test_group]["trials"]
 
         exp = FrequentistABTest(alpha=alpha, alt_hypothesis="two_tailed")
-        exp_results = exp.conduct_experiment(
+        exp_results = exp.run_experiment(
             control_success,
             control_trials,
             test_success,
