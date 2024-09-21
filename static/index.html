@@ -75,6 +75,10 @@
       const data = await response.json();
       resultDiv.innerHTML = "";
 
+      const resultsTitle = document.createElement('h2');
+      resultsTitle.textContent = 'Results:';
+      resultDiv.appendChild(resultsTitle);
+
       if (data?.result?.results?.test1?.plots) {
         const plotDiv = document.createElement('div');
         plotDiv.innerHTML = '<h3>Test Plots:</h3>';
@@ -89,6 +93,10 @@
         resultDiv.appendChild(plotDiv);
       }
       
+      const resultsPreTitle = document.createElement('h3');
+      resultsPreTitle.textContent = 'Test Results:';
+      resultDiv.appendChild(resultsPreTitle);
+
       const resultsPre = document.createElement('pre');
       resultsPre.textContent = JSON.stringify(data, null, 2);
       resultDiv.appendChild(resultsPre);
