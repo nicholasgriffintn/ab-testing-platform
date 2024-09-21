@@ -26,7 +26,7 @@ To install and use this platform, you will need [Poetry](https://python-poetry.o
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/nicholasgriffintn/ab-testing-platform
    cd ab-testing-platform
    ```
 
