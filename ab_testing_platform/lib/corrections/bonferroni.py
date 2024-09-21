@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def bonferroni_correction(p_values):
     """
     Apply Bonferroni correction to p-values.

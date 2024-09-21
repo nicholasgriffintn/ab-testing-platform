@@ -94,6 +94,16 @@ class FrequentistABTest:
         This assumes that the null hypothesis is true, and calculates power for a range of alternative hypotheses.
         """
         effect_sizes = np.arange(0, 0.2, 0.005)
-        powers = [calculate_power(self.prop_null, self.trials_null, self.trials_alt, es, self.alpha, self.alt_hypothesis) for es in effect_sizes]
+        powers = [
+            calculate_power(
+                self.prop_null,
+                self.trials_null,
+                self.trials_alt,
+                es,
+                self.alpha,
+                self.alt_hypothesis,
+            )
+            for es in effect_sizes
+        ]
 
         plot_power_curve(effect_sizes, powers, self.prop_alt - self.prop_null)

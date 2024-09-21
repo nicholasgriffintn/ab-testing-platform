@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+
 def plot_uplift_distribution(uplift_dist, uplift_method, figsize=(18, 6)):
     """Plot the uplift distribution and cumulative distribution."""
     sns.set_style("whitegrid")

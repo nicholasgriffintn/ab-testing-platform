@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 
 from .plotting import plot_uplift_distribution
 
+
 def display_results(trace, uplift_dist, uplift_method):
     """Display the results of the Bayesian A/B test."""
     uplift_percent_above_0 = np.mean(uplift_dist >= 0)

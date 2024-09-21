@@ -1,5 +1,6 @@
 from ..frequentist import FrequentistABTest
 
+
 def run_frequentist_test(group_results, alpha):
     """
     Run Frequentist A/B testing.
@@ -18,9 +19,7 @@ def run_frequentist_test(group_results, alpha):
         A dictionary with the test statistic and p-value.
     """
     control_group = "control"
-    test_groups = [
-        group for group in group_results.keys() if group != control_group
-    ]
+    test_groups = [group for group in group_results.keys() if group != control_group]
 
     results = {}
     for test_group in test_groups:

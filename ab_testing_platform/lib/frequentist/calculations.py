@@ -1,23 +1,21 @@
 import numpy as np
 import scipy.stats as st
 
+
 def calculate_pvalue(stat, alt_hypothesis, alpha):
     """Calculate the p-value based on the test statistic and the hypothesis type."""
     if alt_hypothesis == "one_tailed":
-        return (
-            1 - st.norm.cdf(np.abs(stat))
-            if stat > 0
-            else st.norm.cdf(stat)
-        )
+        return 1 - st.norm.cdf(np.abs(stat)) if stat > 0 else st.norm.cdf(stat)
     elif alt_hypothesis == "two_tailed":
         return 2 * (1 - st.norm.cdf(np.abs(stat)))
 
-def calculate_power(prop_null, trials_null, trials_alt, effect_size, alpha, alt_hypothesis):
+
+def calculate_power(
+    prop_null, trials_null, trials_alt, effect_size, alpha, alt_hypothesis
+):
     """Calculate the power of the test given a specific effect size."""
     se_pooled = np.sqrt(
-        prop_null
-        * (1 - prop_null)
-        * (1 / trials_null + 1 / trials_alt)
+        prop_null * (1 - prop_null) * (1 / trials_null + 1 / trials_alt)
     )
     z_alpha = (
         st.norm.ppf(1 - alpha / 2)

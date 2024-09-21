@@ -1,5 +1,6 @@
 from ..bayesian import BayesianABTest
 
+
 def run_bayesian_test(group_results, prior_successes, prior_trials, num_samples):
     """
     Run Bayesian A/B testing.
@@ -24,9 +25,7 @@ def run_bayesian_test(group_results, prior_successes, prior_trials, num_samples)
         A dictionary with the uplift distribution.
     """
     control_group = "control"
-    test_groups = [
-        group for group in group_results.keys() if group != control_group
-    ]
+    test_groups = [group for group in group_results.keys() if group != control_group]
 
     results = {}
     for test_group in test_groups:

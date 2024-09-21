@@ -97,6 +97,7 @@ def load_user_data(file_path: str):
         user_data = json.load(f)
     return user_data
 
+
 def parse_group_buckets(group_buckets: str):
     """
     Parse the group buckets string into a dictionary.

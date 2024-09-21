@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 
+
 def plot_power_curve(effect_sizes, powers, observed_effect_size):
     """Plot the power curve for the given effect sizes and powers."""
     plt.figure(figsize=(10, 6))

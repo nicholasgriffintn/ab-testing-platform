@@ -1,5 +1,6 @@
 import hashlib
 
+
 def bucket_user(user_id, bucket_count=100):
     """
     Assign a user to a bucket based on a hashed value of their user_id.
@@ -19,6 +20,7 @@ def bucket_user(user_id, bucket_count=100):
     """
     hashed_value = int(hashlib.sha256(str(user_id).encode("utf-8")).hexdigest(), 16)
     return hashed_value % bucket_count
+
 
 def assign_to_group(user_id, group_buckets):
     """
