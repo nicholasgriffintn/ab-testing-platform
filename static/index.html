@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A/B Testing Platform</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>A/B Testing Platform</h1>
+    <div class="input-group">
+      <label for="data-file">Upload Data File:</label>
+      <input type="file" id="data-file" />
+    </div>
+    <div class="input-group">
+      <label for="test-type">Select Test Type:</label>
+      <select id="test-type">
+        <option value="frequentist">Frequentist</option>
+        <option value="bayesian">Bayesian</option>
+      </select>
+    </div>
+    <button onclick="runTest()">Run Test</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    async function runTest() {
+      const fileInput = document.getElementById('data-file');
+      const testType = document.getElementById('test-type').value;
+      const resultDiv = document.getElementById('result');
+
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+      formData.append('test_type', testType);
+
+      resultDiv.innerHTML = "Running test...";
+
+      const response = await fetch('/run-test/', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+      resultDiv.innerHTML = `<h3>Test Result:</h3><pre>${JSON.stringify(data, null, 2)}</pre>`;
+    }
+  </script>
+</body>
+
+</html>

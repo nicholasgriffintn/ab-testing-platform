@@ -15,6 +15,7 @@ This A/B Testing Platform provides a robust and scalable framework for running A
 1. [Installation](#installation)
 2. [Usage](#usage)
    - [CLI](#cli)
+   - [Web](#web)
 3. [Testing](#testing)
 4. [Contributing](#contributing)
 5. [License](#license)
@@ -62,6 +63,15 @@ This will display the available commands and options for the CLI. For example, y
 poetry run ab-testing-platform ab-testing load-data-from-file
 ```
 
+### Web
+
+The platform also includes a web interface for running A/B tests and visualizing the results. To start the web server, use the following command:
+
+```bash
+poetry run ab-testing-platform-api ab_testing_platform.api:app --reload
+```
+
+You should see output indicating that the server is running. You can then navigate to `http://127.0.0.1:8000` in your browser to access the web interface.
 
 ## Testing
 To run the tests, use `tox`:

@@ -16,6 +16,9 @@ arviz = "^0.19.0"
 seaborn = "^0.13.2"
 click = "^8.1.7"
 
+fastapi = "^0.115.0"
+uvicorn = "^0.30.6"
+python-multipart = "^0.0.10"
 [tool.poetry.dev-dependencies]
 tox = "^4.4.6"
 
@@ -26,3 +29,4 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 ab-testing-platform = "ab_testing_platform.__main__:cli"
+ab-testing-platform-api = "uvicorn:main"
