@@ -1,6 +1,10 @@
 import numpy as np
 import pandas as pd
-from statsmodels.stats.multitest import multipletests
+
+from .bonferroni import bonferroni_correction
+from .benjamini_hochberg import benjamini_hochberg_correction
+from .holm import holm_correction
+from .statsmodels import statsmodels_corrections
 
 
 class MultipleTestingCorrection:
@@ -68,8 +72,7 @@ class MultipleTestingCorrection:
         corrected_pvalues : np.array
             Bonferroni-corrected p-values.
         """
-        corrected_pvalues = np.minimum(self.p_values * len(self.p_values), 1.0)
-        return corrected_pvalues
+        return bonferroni_correction(self.p_values)
 
     def benjamini_hochberg_correction(self):
         """
@@ -80,11 +83,7 @@ class MultipleTestingCorrection:
         corrected_pvalues : np.array
             FDR-corrected p-values using the Benjamini-Hochberg method.
         """
-        sorted_p = np.argsort(self.p_values)
-        ranked_pvalues = np.empty_like(self.p_values)
-        ranked_pvalues[sorted_p] = np.arange(1, len(self.p_values) + 1)
-        corrected_pvalues = self.p_values * len(self.p_values) / ranked_pvalues
-        return np.minimum.accumulate(np.minimum(corrected_pvalues, 1.0))
+        return benjamini_hochberg_correction(self.p_values)
 
     def holm_correction(self):
         """
@@ -95,11 +94,7 @@ class MultipleTestingCorrection:
         corrected_pvalues : np.array
             Holm-corrected p-values.
         """
-        sorted_p = np.argsort(self.p_values)
-        ranked_pvalues = np.empty_like(self.p_values)
-        ranked_pvalues[sorted_p] = np.arange(len(self.p_values), 0, -1)
-        corrected_pvalues = self.p_values * ranked_pvalues
-        return np.minimum.accumulate(np.minimum(corrected_pvalues, 1.0))
+        return holm_correction(self.p_values)
 
     def apply_statsmodels_corrections(self, method="fdr_bh"):
         """
@@ -118,8 +113,7 @@ class MultipleTestingCorrection:
         corrected_pvalues : np.array
             Corrected p-values based on the chosen method.
         """
-        _, corrected_pvalues, _, _ = multipletests(self.p_values, method=method)
-        return corrected_pvalues
+        return statsmodels_corrections(self.p_values, method)
 
     def summary(self, method="fdr_bh"):
         """

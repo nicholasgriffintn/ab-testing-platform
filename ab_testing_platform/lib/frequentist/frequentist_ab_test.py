@@ -1,13 +1,16 @@
 import numpy as np
 import scipy.stats as st
-import matplotlib.pyplot as plt
+
+from .validation import validate_hypothesis
+from .calculations import calculate_pvalue, calculate_power
+from .plotting import plot_power_curve
 
 
 class FrequentistABTest:
     """
     Frequentist A/B Testing aka Two sample proportion test.
 
-    Example usgae:
+    Example usage:
 
     ab_test = FrequentistABTest(alpha=0.05, alt_hypothesis='two_tailed')
     ab_test.conduct_experiment(success_null=300, trials_null=1000, success_alt=350, trials_alt=1000)
@@ -28,17 +31,7 @@ class FrequentistABTest:
     def __init__(self, alpha=0.05, alt_hypothesis="one_tailed"):
         self.alpha = alpha
         self.alt_hypothesis = alt_hypothesis.lower()
-        self.validate_hypothesis()
-
-    def validate_hypothesis(self):
-        """Validate the hypothesis input and alpha level."""
-        valid_hypotheses = ["one_tailed", "two_tailed"]
-        if self.alt_hypothesis not in valid_hypotheses:
-            raise ValueError(
-                f"Invalid hypothesis type: {self.alt_hypothesis}. Choose from {valid_hypotheses}."
-            )
-        if not (0 < self.alpha < 1):
-            raise ValueError(f"Alpha should be between 0 and 1, but got {self.alpha}.")
+        validate_hypothesis(self.alt_hypothesis, self.alpha)
 
     def conduct_experiment(self, success_null, trials_null, success_alt, trials_alt):
         """
@@ -77,21 +70,10 @@ class FrequentistABTest:
 
         self.stat = (self.prop_alt - self.prop_null) / se_pooled
 
-        self.pvalue = self.calculate_pvalue()
+        self.pvalue = calculate_pvalue(self.stat, self.alt_hypothesis, self.alpha)
         self.print_freq_results()
 
         return self.stat, self.pvalue
-
-    def calculate_pvalue(self):
-        """Calculate the p-value based on the test statistic and the hypothesis type."""
-        if self.alt_hypothesis == "one_tailed":
-            return (
-                1 - st.norm.cdf(np.abs(self.stat))
-                if self.stat > 0
-                else st.norm.cdf(self.stat)
-            )
-        elif self.alt_hypothesis == "two_tailed":
-            return 2 * (1 - st.norm.cdf(np.abs(self.stat)))
 
     def print_freq_results(self):
         """Prints the results of the A/B test."""
@@ -112,34 +94,6 @@ class FrequentistABTest:
         This assumes that the null hypothesis is true, and calculates power for a range of alternative hypotheses.
         """
         effect_sizes = np.arange(0, 0.2, 0.005)
-        powers = [self.calculate_power(es) for es in effect_sizes]
+        powers = [calculate_power(self.prop_null, self.trials_null, self.trials_alt, es, self.alpha, self.alt_hypothesis) for es in effect_sizes]
 
-        plt.figure(figsize=(10, 6))
-        plt.plot(effect_sizes, powers, label="Power Curve")
-        plt.axhline(y=0.8, color="red", linestyle="--", label="80% Power Threshold")
-        plt.axvline(
-            x=self.prop_alt - self.prop_null,
-            color="blue",
-            linestyle="--",
-            label="Observed Effect Size",
-        )
-        plt.title("Power Curve for A/B Test")
-        plt.xlabel("Effect Size (Difference in Proportions)")
-        plt.ylabel("Power")
-        plt.legend()
-        plt.show()
-
-    def calculate_power(self, effect_size):
-        """Calculate the power of the test given a specific effect size."""
-        se_pooled = np.sqrt(
-            self.prop_null
-            * (1 - self.prop_null)
-            * (1 / self.trials_null + 1 / self.trials_alt)
-        )
-        z_alpha = (
-            st.norm.ppf(1 - self.alpha / 2)
-            if self.alt_hypothesis == "two_tailed"
-            else st.norm.ppf(1 - self.alpha)
-        )
-        z_effect = effect_size / se_pooled
-        return 1 - st.norm.cdf(z_alpha - z_effect)
+        plot_power_curve(effect_sizes, powers, self.prop_alt - self.prop_null)
