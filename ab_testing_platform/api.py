@@ -9,6 +9,13 @@ import pandas as pd
 from ab_testing_platform.pipeline import run_experiment
 from ab_testing_platform.lib.utils import parse_group_buckets
 
+
+async def on_fetch(request, env):
+    import asgi
+
+    return await asgi.fetch(app, request, env)
+
+
 app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
