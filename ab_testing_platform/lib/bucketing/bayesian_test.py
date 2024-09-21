@@ -1,7 +1,14 @@
 from ..bayesian import BayesianABTest
 
 
-def run_bayesian_test(group_results, prior_successes, prior_trials, num_samples):
+def run_bayesian_test(
+    group_results,
+    prior_successes,
+    prior_trials,
+    num_samples,
+    sequential=False,
+    stopping_threshold=None,
+):
     """
     Run Bayesian A/B testing.
 
@@ -18,6 +25,12 @@ def run_bayesian_test(group_results, prior_successes, prior_trials, num_samples)
 
     num_samples : int
         Number of posterior samples for Bayesian A/B testing.
+
+    sequential : bool, optional
+        Whether to use sequential testing.
+
+    stopping_threshold : float, optional
+        The threshold for stopping the experiment early if sequential testing is used.
 
     Returns
     -------
@@ -42,6 +55,8 @@ def run_bayesian_test(group_results, prior_successes, prior_trials, num_samples)
             test_trials,
             uplift_method="percent",
             num_samples=num_samples,
+            sequential=sequential,
+            stopping_threshold=stopping_threshold,
         )
 
         results[test_group] = {

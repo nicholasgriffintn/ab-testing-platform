@@ -39,16 +39,31 @@ class UserBucketingABTest:
 
     num_samples : int, optional
         Number of posterior samples for Bayesian A/B testing.
+
+    sequential : bool, optional
+        Whether to use sequential testing.
+
+    stopping_threshold : float, optional
+        The threshold for stopping the experiment early if sequential testing is used.
     """
 
     def __init__(
-        self, method, alpha=0.05, prior_successes=30, prior_trials=100, num_samples=2000
+        self,
+        method,
+        alpha=0.05,
+        prior_successes=30,
+        prior_trials=100,
+        num_samples=2000,
+        sequential=False,
+        stopping_threshold=None,
     ):
         self.method = method
         self.alpha = alpha
         self.prior_successes = prior_successes
         self.prior_trials = prior_trials
         self.num_samples = num_samples
+        self.sequential = sequential
+        self.stopping_threshold = stopping_threshold
 
     def run_experiment(self, user_data, group_buckets):
         """
@@ -80,10 +95,17 @@ class UserBucketingABTest:
             group_results[group]["success"] += user["event"]
 
         if self.method == "frequentist":
-            return run_frequentist_test(group_results, self.alpha)
+            return run_frequentist_test(
+                group_results, self.alpha, self.sequential, self.stopping_threshold
+            )
         elif self.method == "bayesian":
             return run_bayesian_test(
-                group_results, self.prior_successes, self.prior_trials, self.num_samples
+                group_results,
+                self.prior_successes,
+                self.prior_trials,
+                self.num_samples,
+                self.sequential,
+                self.stopping_threshold,
             )
         else:
             raise ValueError(f"Unknown method: {self.method}")

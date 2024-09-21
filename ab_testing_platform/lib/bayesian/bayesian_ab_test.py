@@ -38,6 +38,8 @@ class BayesianABTest:
         variant_b_trials,
         uplift_method="percent",
         num_samples=2000,
+        sequential=False,
+        stopping_threshold=0.95,
     ):
         """
         Run Bayesian A/B test experiment and calculate uplift.
@@ -61,6 +63,12 @@ class BayesianABTest:
 
         num_samples : int, default=2000
             Number of posterior samples.
+
+        sequential : bool, default=False
+            Whether to perform sequential testing.
+
+        stopping_threshold : float, default=0.95
+            Posterior probability threshold for stopping the sequential test.
         """
 
         # Defining the Bayesian model using PyMC
@@ -86,9 +94,33 @@ class BayesianABTest:
                 p=prior_b,
                 observed=variant_b_successes,
             )
+            
+            print(f"Running {'sequential' if sequential else 'non-sequential'} Bayesian A/B test")
 
-            # Sample from the posterior distribution
-            trace = pm.sample(num_samples, return_inferencedata=True)
+            if sequential:
+                # Burn-in and thinning parameters for MCMC
+                burn_in = 100  # Ignore the first 100 samples for model stabilization
+                thinning = 5  # Only keep every 5th sample to reduce autocorrelation
+                for i in range(burn_in, num_samples + 1, thinning):
+                    trace = pm.sample(1, return_inferencedata=True, tune=0, target_accept=0.95)
+                    posterior_prob = (
+                        (trace.posterior["prior_b"] > trace.posterior["prior_a"])
+                        .mean()
+                        .item()
+                    )
+                    if posterior_prob > stopping_threshold:
+                        print(
+                            f"Stopping early at sample {i} with posterior probability {posterior_prob:.2f}"
+                        )
+                        break
+            else:
+                # Sample from the posterior distribution
+                trace = pm.sample(
+                    num_samples, 
+                    return_inferencedata=True, 
+                    target_accept=0.95, 
+                    tune=1000  # Increase the number of tuning steps
+                )
 
         # Calculate the uplift based on the chosen method
         self.uplift_method = uplift_method

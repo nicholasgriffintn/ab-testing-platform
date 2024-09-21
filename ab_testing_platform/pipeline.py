@@ -1,20 +1,27 @@
 from .lib.bucketing import UserBucketingABTest
 from .lib.corrections import MultipleTestingCorrection
 
-def run_experiment(user_data, group_buckets, method, alpha=0.05, prior_successes=30, prior_trials=100):
+
+def run_experiment(
+    user_data, group_buckets, method, alpha=0.05, prior_successes=30, prior_trials=100, sequential=False, stopping_threshold=None
+):
     """
     Run an A/B test based on the provided user data.
     """
     if method not in ["frequentist", "bayesian"]:
-        return {"error": "Invalid method. Please choose either 'frequentist' or 'bayesian'."}
+        return {
+            "error": "Invalid method. Please choose either 'frequentist' or 'bayesian'."
+        }
 
     if method == "frequentist":
-        ab_test = UserBucketingABTest(method="frequentist", alpha=alpha)
+        ab_test = UserBucketingABTest(method="frequentist", alpha=alpha, sequential=sequential, stopping_threshold=stopping_threshold)
     else:
         ab_test = UserBucketingABTest(
             method="bayesian",
             prior_successes=prior_successes,
             prior_trials=prior_trials,
+            sequential=sequential,
+            stopping_threshold=stopping_threshold,
         )
 
     result = ab_test.run_experiment(user_data, group_buckets)

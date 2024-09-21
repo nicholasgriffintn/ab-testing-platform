@@ -28,8 +28,8 @@ def display_results(trace, uplift_dist, uplift_method):
 
     # Plot posterior distributions
     az.plot_posterior(trace)
-    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.png')
-    plt.savefig(temp_file.name, format='png')
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
+    plt.savefig(temp_file.name, format="png")
     plt.close()
 
     return {

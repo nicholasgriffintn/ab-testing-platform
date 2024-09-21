@@ -51,6 +51,14 @@
         <option value="bayesian">Bayesian</option>
       </select>
     </div>
+    <div class="input-group">
+      <label for="sequential">Use Sequential Testing:</label>
+      <input type="checkbox" id="sequential" />
+    </div>
+    <div class="input-group">
+      <label for="stopping-threshold">Stopping Threshold:</label>
+      <input type="number" id="stopping-threshold" step="0.01" />
+    </div>
     <button onclick="runTest()">Run Test</button>
     <div id="result"></div>
   </div>
@@ -59,11 +67,15 @@
     async function runTest() {
       const fileInput = document.getElementById('data-file');
       const testType = document.getElementById('test-type').value;
+      const sequential = document.getElementById('sequential').checked;
+      const stoppingThreshold = document.getElementById('stopping-threshold').value;
       const resultDiv = document.getElementById('result');
 
       const formData = new FormData();
       formData.append('file', fileInput.files[0]);
       formData.append('test_type', testType);
+      formData.append('sequential', sequential);
+      formData.append('stopping_threshold', stoppingThreshold);
 
       resultDiv.innerHTML = "Running test...";
 

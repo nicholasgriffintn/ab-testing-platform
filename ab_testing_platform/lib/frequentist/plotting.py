@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import tempfile
 
+
 def plot_power_curve(effect_sizes, powers, observed_effect_size):
     """Plot the power curve for the given effect sizes and powers and save it to a temp file."""
     plt.figure(figsize=(10, 6))
@@ -20,7 +21,5 @@ def plot_power_curve(effect_sizes, powers, observed_effect_size):
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
     plt.savefig(temp_file.name)
     temp_file.close()
- 
-    return {
-        "power_curve": temp_file.name
-    }
+
+    return {"power_curve": temp_file.name}

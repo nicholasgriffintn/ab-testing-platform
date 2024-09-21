@@ -1,7 +1,9 @@
 from ..frequentist import FrequentistABTest
 
 
-def run_frequentist_test(group_results, alpha):
+def run_frequentist_test(
+    group_results, alpha, sequential=False, stopping_threshold=None
+):
     """
     Run Frequentist A/B testing.
 
@@ -12,6 +14,12 @@ def run_frequentist_test(group_results, alpha):
 
     alpha : float
         Significance level for Frequentist A/B testing.
+
+    sequential : bool, optional
+        Whether to use sequential testing.
+
+    stopping_threshold : float, optional
+        The threshold for stopping the experiment early if sequential testing is used.
 
     Returns
     -------
@@ -30,7 +38,12 @@ def run_frequentist_test(group_results, alpha):
 
         exp = FrequentistABTest(alpha=alpha, alt_hypothesis="two_tailed")
         exp_results = exp.conduct_experiment(
-            control_success, control_trials, test_success, test_trials
+            control_success,
+            control_trials,
+            test_success,
+            test_trials,
+            sequential=sequential,
+            stopping_threshold=stopping_threshold,
         )
 
         results[test_group] = exp_results

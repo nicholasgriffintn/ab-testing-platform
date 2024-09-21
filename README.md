@@ -7,6 +7,7 @@ This A/B Testing Platform provides a robust and scalable framework for running A
 
 ## Features
 - **Bayesian and Frequentist A/B Testing**: Supports both Bayesian and Frequentist approaches to A/B testing, providing flexibility depending on your analysis requirements.
+- **Sequential Testing**: Allows for running frquentist and bayesian A/B tests sequentially, stopping early if a significant result is found.
 - **Bucketing**: Provides functionality for bucketing users into test groups using various strategies.
 - **Multiple Testing Corrections**: Includes multiple testing correction algorithms such as Bonferroni, Benjamini-Hochberg, and Holm corrections.
 - **Plotting**: Offers built-in plotting tools for visualizing A/B test results.
