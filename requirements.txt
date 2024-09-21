@@ -1,9 +1,0 @@
-statsmodels
-matplotlib
-scipy
-pymc
-arviz
-seaborn
-fastapi
-python-multipart
-click
