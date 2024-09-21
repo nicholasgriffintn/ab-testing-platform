@@ -53,6 +53,8 @@ async def run_ab_test_api(file: UploadFile = File(...), test_type: str = Form(..
             return obj.to_dict(orient='records')
         elif isinstance(obj, bytes):
             return obj.decode('utf-8')
+        elif isinstance(obj, np.bool_):
+            return bool(obj)
         raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
 
     test_result_serializable = json.loads(json.dumps(test_result, default=convert_to_serializable))

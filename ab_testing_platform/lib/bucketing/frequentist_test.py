@@ -29,18 +29,10 @@ def run_frequentist_test(group_results, alpha):
         test_trials = group_results[test_group]["trials"]
 
         exp = FrequentistABTest(alpha=alpha, alt_hypothesis="two_tailed")
-        stat, pvalue = exp.conduct_experiment(
+        exp_results = exp.conduct_experiment(
             control_success, control_trials, test_success, test_trials
         )
 
-        results[test_group] = {
-            "method": "frequentist",
-            "statistic": stat,
-            "p_value": pvalue,
-            "control_success": control_success,
-            "control_trials": control_trials,
-            "test_success": test_success,
-            "test_trials": test_trials,
-        }
+        results[test_group] = exp_results
 
     return results

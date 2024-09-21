@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
-
+import tempfile
 
 def plot_power_curve(effect_sizes, powers, observed_effect_size):
-    """Plot the power curve for the given effect sizes and powers."""
+    """Plot the power curve for the given effect sizes and powers and save it to a temp file."""
     plt.figure(figsize=(10, 6))
     plt.plot(effect_sizes, powers, label="Power Curve")
     plt.axhline(y=0.8, color="red", linestyle="--", label="80% Power Threshold")
@@ -16,4 +16,11 @@ def plot_power_curve(effect_sizes, powers, observed_effect_size):
     plt.xlabel("Effect Size (Difference in Proportions)")
     plt.ylabel("Power")
     plt.legend()
-    plt.show()
+
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
+    plt.savefig(temp_file.name)
+    temp_file.close()
+ 
+    return {
+        "power_curve": temp_file.name
+    }

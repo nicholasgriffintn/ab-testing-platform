@@ -27,7 +27,7 @@ def run_experiment(user_data, group_buckets, method, alpha=0.05, prior_successes
     if method == "frequentist":
         p_values = []
         for test_group, res in result.items():
-            p_values.append(res["p_value"])
+            p_values.append(res["pvalue"])
 
         # Apply multiple testing correction if there are multiple p-values
         if len(p_values) > 1:

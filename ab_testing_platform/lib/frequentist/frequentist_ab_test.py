@@ -71,22 +71,30 @@ class FrequentistABTest:
         self.stat = (self.prop_alt - self.prop_null) / se_pooled
 
         self.pvalue = calculate_pvalue(self.stat, self.alt_hypothesis, self.alpha)
-        self.print_freq_results()
+        return self.get_freq_results()
 
-        return self.stat, self.pvalue
-
-    def print_freq_results(self):
-        """Prints the results of the A/B test."""
-        print("\nFrequentist A/B Test Summary\n============================")
-        print(
-            f"Version A: {self.success_null}/{self.trials_null} ({self.prop_null:.2%})"
-        )
-        print(f"Version B: {self.success_alt}/{self.trials_alt} ({self.prop_alt:.2%})")
-        print(f"Test Statistic (Z): {self.stat:.4f}")
-        print(f"P-Value: {self.pvalue:.4f}")
-        print(
-            f"Significant at alpha={self.alpha}? {'Yes' if self.pvalue < self.alpha else 'No'}"
-        )
+    def get_freq_results(self):
+        """Returns the results of the A/B test."""
+        
+        plots = self.plot_power_curve()
+        
+        results = {
+            "version_a": {
+                "success": self.success_null,
+                "trials": self.trials_null,
+                "proportion": self.prop_null,
+            },
+            "version_b": {
+                "success": self.success_alt,
+                "trials": self.trials_alt,
+                "proportion": self.prop_alt,
+            },
+            "statistic": self.stat,
+            "pvalue": self.pvalue,
+            "significant": self.pvalue < self.alpha,
+            "plots": plots,
+        }
+        return results
 
     def plot_power_curve(self):
         """
@@ -106,4 +114,4 @@ class FrequentistABTest:
             for es in effect_sizes
         ]
 
-        plot_power_curve(effect_sizes, powers, self.prop_alt - self.prop_null)
+        return plot_power_curve(effect_sizes, powers, self.prop_alt - self.prop_null)
