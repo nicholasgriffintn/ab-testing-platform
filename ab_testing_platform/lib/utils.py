@@ -96,3 +96,14 @@ def load_user_data(file_path: str):
     with open(file_path, "r") as f:
         user_data = json.load(f)
     return user_data
+
+def parse_group_buckets(group_buckets: str):
+    """
+    Parse the group buckets string into a dictionary.
+    """
+    group_buckets_dict = {}
+    for group in group_buckets.split(","):
+        name, range_str = group.split(":")
+        start, end = map(int, range_str.split("-"))
+        group_buckets_dict[name] = range(start, end)
+    return group_buckets_dict

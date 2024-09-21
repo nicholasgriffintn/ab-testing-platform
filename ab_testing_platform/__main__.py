@@ -1,6 +1,6 @@
 import click
 
-from .lib.utils import load_user_data
+from .lib.utils import load_user_data, parse_group_buckets
 from .pipeline import run_experiment
 
 
@@ -19,7 +19,14 @@ def ab_testing():
 
 
 @click.command()
-def input_data_manually():
+@click.option(
+    "--group_buckets",
+    required=True,
+    type=str,
+    help="Group buckets in the format 'group1:start-end,group2:start-end' (e.g., 'control:0-50,test1:50-100')",
+    default="control:0-50,test1:50-100",
+)
+def input_data_manually(group_buckets):
     """
     Input user data manually and run an A/B test.
     """
@@ -34,9 +41,9 @@ def input_data_manually():
         user_data.append({"user_id": user_id, "event": event})
 
     click.echo(f"Collected {len(user_data)} users. Now running the experiment.")
-    group_buckets = {"control": range(0, 50), "test1": range(50, 100)}
-    click.echo(f"Using group buckets: {group_buckets}")
-    run_experiment(user_data, group_buckets)
+    group_buckets_dict = parse_group_buckets(group_buckets)
+    click.echo(f"Using group buckets: {group_buckets_dict}")
+    run_experiment(user_data, group_buckets_dict)
 
 
 ab_testing.add_command(input_data_manually)
@@ -48,8 +55,16 @@ ab_testing.add_command(input_data_manually)
     required=True,
     type=click.Path(exists=True),
     help="The path to the JSON file containing user data",
+    default="./tests/fixtures/ab-testing-users.json",
 )
-def load_data_from_file(file_path: str):
+@click.option(
+    "--group_buckets",
+    required=True,
+    type=str,
+    help="Group buckets in the format 'group1:start-end,group2:start-end' (e.g., 'control:0-50,test1:50-100')",
+    default="control:0-50,test1:50-100",
+)
+def load_data_from_file(file_path: str, group_buckets: str):
     """
     Load user data from a JSON file and run an A/B test.
     """
@@ -58,9 +73,9 @@ def load_data_from_file(file_path: str):
         click.echo(
             f"Loaded {len(user_data)} users from {file_path}. Now running the experiment."
         )
-        group_buckets = {"control": range(0, 50), "test1": range(50, 100)}
-        click.echo(f"Using group buckets: {group_buckets}")
-        run_experiment(user_data, group_buckets)
+        group_buckets_dict = parse_group_buckets(group_buckets)
+        click.echo(f"Using group buckets: {group_buckets_dict}")
+        run_experiment(user_data, group_buckets_dict)
     except Exception as e:
         click.echo(f"Error loading file: {e}", err=True)
 

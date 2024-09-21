@@ -1,7 +1,6 @@
 import click
-
 from .lib.bucketing import UserBucketingABTest
-
+from .lib.corrections import MultipleTestingCorrection
 
 def run_experiment(user_data, group_buckets):
     """
@@ -42,6 +41,7 @@ def run_experiment(user_data, group_buckets):
 
     # Show results
     if method == "frequentist":
+        p_values = []
         for test_group, result in result.items():
             click.echo(f"\nFrequentist Test Results for {test_group}\n{'='*25}")
             click.echo(f"Test Statistic (Z): {result['statistic']:.4f}")
@@ -52,19 +52,23 @@ def run_experiment(user_data, group_buckets):
             click.echo(
                 f"Test Successes: {result['test_success']} / {result['test_trials']}"
             )
+            p_values.append(result['p_value'])
+            
+        # Apply multiple testing correction if there are multiple p-values
+        if len(p_values) > 1:
+            correction_method = click.prompt(
+                "Choose correction method: 'bonferroni', 'fdr_bh', 'holm'", default='fdr_bh'
+            )
+            correction = MultipleTestingCorrection(p_values)
+            corrected_p_values = correction.apply_statsmodels_corrections(method=correction_method)
+
+            click.echo(f"\nCorrected P-Values using {correction_method} method\n{'='*50}")
+            for test_group, corrected_p_value in zip(result.keys(), corrected_p_values):
+                click.echo(f"{test_group}: {corrected_p_value:.4f}")
+        else:
+            click.echo("\nNo multiple testing correction applied as only one test was conducted.")
+
     else:
-        print(result)
-
-        {
-            "test1": {
-                "method": "bayesian",
-                "control_success": 1,
-                "control_trials": 2,
-                "test_success": 1,
-                "test_trials": 2,
-            }
-        }
-
         for test_group, result in result.items():
             click.echo(f"\nBayesian Test Results for {test_group}\n{'='*25}")
             click.echo(
