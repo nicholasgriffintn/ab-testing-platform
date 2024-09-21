@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
-
+import tempfile
 
 def plot_uplift_distribution(uplift_dist, uplift_method, figsize=(18, 6)):
     """Plot the uplift distribution and cumulative distribution."""
@@ -34,4 +34,9 @@ def plot_uplift_distribution(uplift_dist, uplift_method, figsize=(18, 6)):
     plt.xlabel("Cumulative Uplift")
     plt.ylabel("Density")
 
-    plt.show()
+    # Save the plot to a temporary file
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.png')
+    plt.savefig(temp_file.name, format='png')
+    plt.close()
+
+    return temp_file.name

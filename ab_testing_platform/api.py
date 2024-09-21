@@ -1,8 +1,10 @@
-from fastapi import FastAPI, UploadFile, File, Form
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 import os
 import json
+import numpy as np
+import pandas as pd
 
 from ab_testing_platform.pipeline import run_experiment
 from ab_testing_platform.lib.utils import parse_group_buckets
@@ -17,6 +19,13 @@ async def serve_html():
         html_content = file.read()
     return HTMLResponse(content=html_content, status_code=200)
 
+@app.get("/render-image")
+def render_image(file_path: str):
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="File not found")
+    return FileResponse(file_path, media_type='image/png', filename=os.path.basename(file_path))
+
+
 @app.post("/run-test/")
 async def run_ab_test_api(file: UploadFile = File(...), test_type: str = Form(...)):
     data = await file.read()
@@ -30,4 +39,15 @@ async def run_ab_test_api(file: UploadFile = File(...), test_type: str = Form(..
     # TODO: Allow the user to specify alpha, prior_successes, and prior_trials
     test_result = run_experiment(user_data=user_data, group_buckets=group_buckets, method=test_type)
     
-    return {"result": test_result}
+    def convert_to_serializable(obj):
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        elif isinstance(obj, pd.DataFrame):
+            return obj.to_dict(orient='records')
+        elif isinstance(obj, bytes):
+            return obj.decode('utf-8')
+        raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
+
+    test_result_serializable = json.loads(json.dumps(test_result, default=convert_to_serializable))
+    
+    return JSONResponse(content={"result": test_result_serializable}, status_code=200)

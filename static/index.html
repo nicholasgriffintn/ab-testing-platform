@@ -64,7 +64,25 @@
       });
 
       const data = await response.json();
-      resultDiv.innerHTML = `<h3>Test Result:</h3><pre>${JSON.stringify(data, null, 2)}</pre>`;
+      resultDiv.innerHTML = "";
+
+      if (data?.result?.results?.test1?.plots) {
+        const plotDiv = document.createElement('div');
+        plotDiv.innerHTML = '<h3>Test Plots:</h3>';
+        const uplift_image = data.result.results.test1.plots.uplift_image;
+        const posterior_image = data.result.results.test1.plots.posterior_image;
+        const img1 = document.createElement('img');
+        img1.src = `render-image?file_path=${uplift_image}`;
+        plotDiv.appendChild(img1);
+        const img2 = document.createElement('img');
+        img2.src = `render-image?file_path=${posterior_image}`;
+        plotDiv.appendChild(img2);
+        resultDiv.appendChild(plotDiv);
+      }
+      
+      const resultsPre = document.createElement('pre');
+      resultsPre.textContent = JSON.stringify(data, null, 2);
+      resultDiv.appendChild(resultsPre);
     }
   </script>
 </body>

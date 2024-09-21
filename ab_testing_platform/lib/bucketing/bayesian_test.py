@@ -50,6 +50,8 @@ def run_bayesian_test(group_results, prior_successes, prior_trials, num_samples)
             "control_trials": control_trials,
             "test_success": test_success,
             "test_trials": test_trials,
+            "uplift_method": exp.uplift_method,
+            "plots": exp.plots,
         }
 
     return results

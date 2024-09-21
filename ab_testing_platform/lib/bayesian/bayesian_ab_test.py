@@ -95,4 +95,4 @@ class BayesianABTest:
         self.uplift_dist = calculate_uplift(trace, uplift_method)
 
         # Display the results
-        display_results(trace, self.uplift_dist, uplift_method)
+        self.plots = display_results(trace, self.uplift_dist, uplift_method)
